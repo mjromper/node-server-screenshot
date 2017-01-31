@@ -49,7 +49,7 @@ Nightmare.action('injectHTML', function (selector, html, done) {
  *
  * @param {function()} callback
  */
-module.exports.fromURL = function (url, path, options, callback) {
+module.exports.fromURL = function (url, path, options, callback, callbackError) {
     "use strict";
 
     if(typeof options == "function") {
@@ -58,6 +58,7 @@ module.exports.fromURL = function (url, path, options, callback) {
     }
     options = options || {};
     callback = callback || function(){};
+    callbackError = callbackError || function(){};
 
     var n = Nightmare({
         show: true,
@@ -72,6 +73,9 @@ module.exports.fromURL = function (url, path, options, callback) {
         .screenshot(path, options.clip)
         .then(function () {
             callback();
+        })
+        .catch(function (error) {
+            callbackError(error);
         });
     n.end();
 };
@@ -96,7 +100,7 @@ module.exports.fromURL = function (url, path, options, callback) {
  *
  * @param {function()} callback
  */
-module.exports.fromHTML = function (html, path, options, callback) {
+module.exports.fromHTML = function (html, path, options, callback, callbackError) {
     "use strict";
     var identifier = Math.random();
     if(typeof options == "function") {
@@ -106,6 +110,7 @@ module.exports.fromHTML = function (html, path, options, callback) {
 
     options = options || {};
     callback = callback || function(){};
+    callbackError = callbackError || function(){};
     options.inject = options.inject || {};
 
     var n = Nightmare({
@@ -124,6 +129,8 @@ module.exports.fromHTML = function (html, path, options, callback) {
         .screenshot(path, options.clip)
         .then(function () {
             callback();
+        }).catch(function (error) {
+            callbackError( error );
         });
     n.end();
 
